@@ -1,20 +1,14 @@
 import css from "./MovieModal.module.css";
 import { createPortal } from "react-dom";
 import { useEffect } from "react";
+import type { Movie } from "../../types/movie";
 
-interface ModalProps {
+interface MovieModalProps {
   onClose: () => void;
-  movie: {
-    id: number;
-    title: string;
-    overview: string;
-    release_date: string;
-    vote_average: number;
-    backdrop_path: string;
-  } | null;
+  movie: Movie | null;
 }
 
-export default function MovieModal({ movie, onClose }: ModalProps) {
+export function MovieModal({ movie, onClose }: MovieModalProps) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -74,3 +68,5 @@ export default function MovieModal({ movie, onClose }: ModalProps) {
     document.body
   );
 }
+
+export default MovieModal;
