@@ -1,7 +1,7 @@
 import axios from "axios";
 import type { Movie } from "../types/movie";
 
-const apiKey = import.meta.env.VITE_MY_API_KEY;
+const apiKey = import.meta.env.VITE_TMDB_TOKEN;
 
 
 interface GetMoviesResponse {

@@ -1,28 +1,28 @@
-// import { useState } from "react";
-// import "./App.css";
-// import styles from "./App.module.css";
 import MovieGrid from "../MovieGrid/MovieGrid";
 import SearchBar from "../SearchBar/SearchBar";
-
+import { Toaster, toast } from "react-hot-toast";
 import { useState } from "react";
 import type { Movie } from "../../types/movie";
 import Loader from "../Loader/Loader";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
-import { getMovies } from "../../services/movieService"; // Assuming you have an API function to fetch movies
+import { getMovies } from "../../services/movieService";
+import MovieModal from "../MovieModal/MovieModal";
 
-function App() {
+export default function App() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
   const handleSearch = async (newQuery: string) => {
-    console.log("handleSearch:", newQuery);
-
     try {
       setMovies([]);
       setIsLoading(true);
       setIsError(false);
       const newMovie = await getMovies(newQuery);
+      if (newMovie.length === 0) {
+        toast.error("No movies found for your request");
+      }
       setMovies(newMovie);
     } catch {
       setIsError(true);
@@ -31,17 +31,26 @@ function App() {
     }
   };
 
+  const handleSelectMovie = (movie: Movie) => {
+    setSelectedMovie(movie);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedMovie(null);
+  };
+
   return (
     <>
+      <Toaster position="top-right" reverseOrder={false} />
       {isLoading && <Loader />}
       {isError && <ErrorMessage />}
-      <SearchBar onSearch={handleSearch} />
-      {movies.length > 0 && <MovieGrid movies={movies} />}
+      <SearchBar onSubmit={handleSearch} />
+      {movies.length > 0 && (
+        <MovieGrid movies={movies} onSelect={handleSelectMovie} />
+      )}
+      {selectedMovie && (
+        <MovieModal movie={selectedMovie} onClose={handleCloseModal} />
+      )}
     </>
   );
 }
-
-export default App;
-// export const getMovies = async () => {
-//     const response = await axios.get("https://api.example.com/movies")
-// }
